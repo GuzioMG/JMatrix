@@ -1,10 +1,10 @@
-package hub.guzio.MatrixTest;
+package hub.guzio.JMatrix;
 
 import com.sun.net.httpserver.HttpServer;
-import hub.guzio.MatrixTest.cannedHandlers.AliasEndpoint;
-import hub.guzio.MatrixTest.cannedHandlers.MinecraftProtocol;
-import hub.guzio.MatrixTest.cannedHandlers.UnknownEndpoint;
-import hub.guzio.MatrixTest.cannedHandlers.UnknownProtocol;
+import hub.guzio.JMatrix.cannedHandlers.AliasEndpoint;
+import hub.guzio.JMatrix.cannedHandlers.MinecraftProtocol;
+import hub.guzio.JMatrix.cannedHandlers.UnknownEndpoint;
+import hub.guzio.JMatrix.cannedHandlers.UnknownProtocol;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

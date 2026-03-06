@@ -7,6 +7,27 @@
     <groupId>hub.guzio.JMatrix</groupId>
     <artifactId>jmatrix</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <comments>Copyright © 2026 Guzio | Licensed under MIT</comments>
+            <url>https://github.com/GuzioMG/JMatrix/blob/main/LICENSE</url>
+        </license>
+    </licenses>
+
+    <repositories>
+        <repository>
+            <id>github_guziomg_saneserver</id>
+            <url>https://maven.pkg.github.com/guziomg/saneserver</url>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>hub.guzio.SaneServer</groupId>
+            <artifactId>sane-server</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
@@ -14,22 +35,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.4.1</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>hub.guzio.MatrixTest.Main</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub GuzioMG Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/guziomg/jmatrix</url>
+        </repository>
+    </distributionManagement>
 </project>

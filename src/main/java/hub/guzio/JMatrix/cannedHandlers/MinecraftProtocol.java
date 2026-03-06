@@ -1,9 +1,9 @@
-package hub.guzio.MatrixTest.cannedHandlers;
+package hub.guzio.JMatrix.cannedHandlers;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import hub.guzio.MatrixTest.sensibleServer.Response;
-import hub.guzio.MatrixTest.sensibleServer.SmartHandler;
+import hub.guzio.SaneServer.Response;
+import hub.guzio.SaneServer.SmartHandler;
 
 import java.net.URI;
 
