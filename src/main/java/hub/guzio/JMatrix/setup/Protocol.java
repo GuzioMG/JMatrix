@@ -2,7 +2,7 @@ package hub.guzio.JMatrix.setup;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import hub.guzio.MatrixTest.sensibleServer.Response;
+import hub.guzio.SaneServer.Response;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;

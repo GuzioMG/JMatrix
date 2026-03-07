@@ -10,14 +10,13 @@ import java.net.URI;
 
 public class UnknownEndpoint extends MatrixHandler {
     public UnknownEndpoint(Logger logger) { super(logger); }
-    public UnknownEndpoint(){}
 
     @Override
-    protected Response onRequest(HttpExchange rq, Headers resp, URI path, String[] pathButUseless, String[] qp) throws Throwable {
+    protected Response onRequest(HttpExchange rq, URI path, String[] pathButUseless, String[] qp, String body) throws Throwable {
         return getError(404, path, "");
     }
 
     public static Response getError(int code, URI path, String context) {
-        return new Response(code, "json", "{\"errcode\":\"M_UNRECOGNIZED\",\"error\":\"ERROR 404: \\\""+path+"\\\" is not a valid Matrix AppService V1 endpoint"+context+".\"}");
+        return new Response(code, "json", "{\"errcode\":\"M_UNRECOGNIZED\",\"error\":\"ERROR "+code+": \\\""+path+"\\\" is not a valid Matrix AppService V1 endpoint"+context+".\"}");
     }
 }

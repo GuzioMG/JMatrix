@@ -19,7 +19,6 @@ public record RegistrationYaml(
         @NotNull String sender_localpart,
         @Nullable URI url
 ) {
-
     @Override
     public @NotNull String toString() {
         String uriString;

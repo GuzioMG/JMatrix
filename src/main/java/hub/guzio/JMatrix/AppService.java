@@ -30,7 +30,7 @@ public abstract class AppService {
     }
 
     public HttpServer serve(InetSocketAddress port) throws IllegalStateException, IOException {
-        if (consumed) throw new IllegalStateException("Attempted to serve an already-consumed AppService");
+        if (consumed) throw new IllegalStateException("Attempted to serve an already-consumed AppService instance.");
         consumed = true;
 
         HttpServer server = HttpServer.create(port, backlog);
