@@ -7,8 +7,8 @@ import hub.guzio.SaneServer.Response;
 
 import java.util.Optional;
 
-public class Ping extends GuardedMatrixHandler {
-    public Ping(AppService appservice){
+public class PingHandler extends GuardedMatrixHandler {
+    public PingHandler(AppService appservice){
         super(appservice, 4, "POST", new Response(200, "json", "{}"));
     }
 
