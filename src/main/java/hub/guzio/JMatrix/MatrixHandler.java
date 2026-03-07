@@ -9,9 +9,15 @@ import hub.guzio.SaneServer.SmartHandler;
 import java.net.URI;
 
 public abstract class MatrixHandler extends SmartHandler {
-
-    public MatrixHandler(Logger logger) {this.l = logger;}
     protected Logger l;
+
+    public MatrixHandler(Logger logger) {
+        super(logger);
+        this.l = logger;
+    }
+    public MatrixHandler(){
+        l = new Logger();
+    }
 
     @Override
     protected Response onError(HttpExchange rq, URI path, Headers resp, Throwable e) {

@@ -9,9 +9,8 @@ import hub.guzio.SaneServer.Response;
 import java.net.URI;
 
 public class UnknownEndpoint extends MatrixHandler {
-    public UnknownEndpoint() {
-        super(new Logger());
-    }
+    public UnknownEndpoint(Logger logger) { super(logger); }
+    public UnknownEndpoint(){}
 
     @Override
     protected Response onRequest(HttpExchange rq, Headers resp, URI path, String[] pathButUseless, String[] qp) throws Throwable {
