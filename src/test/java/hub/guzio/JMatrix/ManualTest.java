@@ -1,10 +1,6 @@
 package hub.guzio.JMatrix;
 
 import com.sun.net.httpserver.HttpServer;
-import hub.guzio.JMatrix.cannedHandlers.AliasEndpoint;
-import hub.guzio.JMatrix.cannedHandlers.MinecraftProtocol;
-import hub.guzio.JMatrix.cannedHandlers.UnknownEndpoint;
-import hub.guzio.JMatrix.cannedHandlers.UnknownProtocol;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,7 +11,7 @@ import java.net.http.HttpResponse;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class Main {
+public class ManualTest {
     static void main() throws IOException {
         var sv = HttpServer.create(new InetSocketAddress(8080), 1000);
         var in = new Scanner(System.in);

@@ -1,4 +1,4 @@
-package hub.guzio.JMatrix.cannedHandlers;
+package hub.guzio.JMatrix._internal.handlers;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;

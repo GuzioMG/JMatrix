@@ -14,7 +14,7 @@ public abstract class MatrixHandler extends SmartHandler {
     protected Logger l;
 
     @Override
-    public Response onError(HttpExchange rq, URI path, Headers resp, Throwable e) throws Throwable {
+    protected Response onError(HttpExchange rq, URI path, Headers resp, Throwable e) {
         l.err("Error while handling \""+path+"\": ", e);
         return new Response(500, "json", "{\"errcode\":\"M_UNKNOWN\",\"error\":\"The AppService thrown an unhandled exception while processing your request. Sorry, that's all we know. ;-<\"}");
     }
