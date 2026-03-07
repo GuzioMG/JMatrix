@@ -1,14 +1,16 @@
-package hub.guzio.JMatrix.setup;
+package hub.guzio.JMatrix;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import hub.guzio.JMatrix.data.FieldType;
+import hub.guzio.JMatrix.data.ProtocolInstance;
 import hub.guzio.SaneServer.Response;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Map;
 
-public abstract class Protocol{
+public abstract class Protocol {
     public final Map<String, FieldType> field_types;
     public final URI icon;
     public final String[] location_fields;

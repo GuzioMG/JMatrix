@@ -1,5 +1,6 @@
-package hub.guzio.JMatrix.setup;
+package hub.guzio.JMatrix.data;
 
+import hub.guzio.JMatrix.Protocol;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

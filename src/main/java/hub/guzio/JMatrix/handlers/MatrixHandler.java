@@ -1,4 +1,4 @@
-package hub.guzio.JMatrix;
+package hub.guzio.JMatrix.handlers;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;

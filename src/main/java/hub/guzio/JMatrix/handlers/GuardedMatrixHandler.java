@@ -1,8 +1,7 @@
-package hub.guzio.JMatrix._internal.handlers;
+package hub.guzio.JMatrix.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import hub.guzio.JMatrix.AppService;
-import hub.guzio.JMatrix.MatrixHandler;
 import hub.guzio.SaneServer.Response;
 
 import java.net.URI;

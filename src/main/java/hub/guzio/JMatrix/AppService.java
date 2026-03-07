@@ -1,8 +1,7 @@
 package hub.guzio.JMatrix;
 
 import com.sun.net.httpserver.HttpServer;
-import hub.guzio.JMatrix._internal.handlers.UnknownEndpoint;
-import hub.guzio.JMatrix.setup.RegistrationYaml;
+import hub.guzio.JMatrix.data.RegistrationYaml;
 import hub.guzio.SaneServer.Logger;
 import hub.guzio.SaneServer.Response;
 
