@@ -14,7 +14,7 @@ public class UnknownEndpoint extends MatrixHandler {
     }
 
     @Override
-    public Response onRequest(HttpExchange rq, URI path, Headers resp) {
+    protected Response onRequest(HttpExchange rq, Headers resp, URI path, String[] pathButUseless, String[] qp) throws Throwable {
         return getError(404, path, "");
     }
 

@@ -20,7 +20,7 @@ public abstract class AuthenticatedMatrixHandler extends MatrixHandler {
     }
 
     @Override
-    protected Response onRequest(HttpExchange rq, URI path, Headers resp) {
+    protected Response onRequest(HttpExchange rq, Headers resp, URI rawPath, String[] processedPath, String[] queryParameters) throws Throwable {
         var authHeader = rq.getRequestHeaders().get("Authentication");
         if (Objects.isNull(authHeader) || authHeader.size() != 1) return new Response(401, "json", "{\"errcode\":\"M_MISSING_TOKEN\",\"error\":\"No valid token was provided. Or maybe multiple were, this code doesn't care. The bottom line is that exactly 1 (one) auth token was expected, but that wasn't the case. Treating this request as unauthenticated.\"}");
 

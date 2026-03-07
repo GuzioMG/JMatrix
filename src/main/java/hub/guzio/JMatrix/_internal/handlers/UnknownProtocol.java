@@ -14,7 +14,7 @@ public class UnknownProtocol extends MatrixHandler {
     }
 
     @Override
-    public Response onRequest(HttpExchange rq, URI path, Headers resp) {
+    protected Response onRequest(HttpExchange rq, Headers resp, URI rawPath, String[] processedPath, String[] queryParameters) throws Throwable {
         return new Response(404, "json", "{\"errcode\":\"M_NOT_FOUND\",\"error\":\"ERROR 404: Unknown protocol. Only \\\"minecraft\\\" is supported.\"}");
     }
 }
