@@ -2,6 +2,12 @@ package hub.guzio.JMatrix;
 
 import com.sun.net.httpserver.HttpServer;
 import hub.guzio.JMatrix.data.RegistrationYaml;
+import hub.guzio.JMatrix.handlers.UnknownEndpoint;
+import hub.guzio.JMatrix.handlers._internal.*;
+import hub.guzio.JMatrix.handlers._internal.freestanding.PingHandler;
+import hub.guzio.JMatrix.handlers._internal.protocolQuery.LocationQueryInProtocolHandler;
+import hub.guzio.JMatrix.handlers._internal.protocolQuery.ProtocolQueryHandler;
+import hub.guzio.JMatrix.handlers._internal.protocolQuery.UserQueryInProtocolHandler;
 import hub.guzio.SaneServer.Logger;
 import hub.guzio.SaneServer.Response;
 
@@ -34,19 +40,27 @@ public abstract class AppService {
 
         HttpServer server = HttpServer.create(port, backlog);
 
-        /*/Core endpoints
-        server.createContext("/_matrix/app/v1/transactions/", new MainHandler());
-        server.createContext("/_matrix/app/v1/ping", new MainHandler());
-        server.createContext("/_matrix/app/v1/users/", new MainHandler());
-        server.createContext("/_matrix/app/v1/rooms/", new AliasEndpoint());
+        //Core endpoints
+        server.createContext("/_matrix/app/v1/transactions/", new TransactionHandler(this));
+        server.createContext("/_matrix/app/v1/ping/", new PingHandler(this));
+        server.createContext("/_matrix/app/v1/users/", new UserCreateHandler(this));
+        server.createContext("/_matrix/app/v1/rooms/", new RoomCreateHandler(this));
 
-        //Protocol endpoints
-        server.createContext("/_matrix/app/v1/thirdparty/location/", new AliasEndpoint());
-        server.createContext("/_matrix/app/v1/thirdparty/protocol/", new MinecraftProtocol());
-        server.createContext("/_matrix/app/v1/thirdparty/user/", new UserlistHandler());
+        //Static protocol endpoints
+        server.createContext("/_matrix/app/v1/thirdparty/user/", new UserQueryHandler(this));
+        server.createContext("/_matrix/app/v1/thirdparty/location/", new LocationQueryHandler(this));
+
+        //Dynamic protocol endpoints
+        if (registration.protocols().isPresent()){
+            for(var proto : registration.protocols().get().entrySet()){
+                server.createContext("/_matrix/app/v1/thirdparty/user/"+proto.getKey(), new UserQueryInProtocolHandler(this));
+                server.createContext("/_matrix/app/v1/thirdparty/location/"+proto.getKey(), new LocationQueryInProtocolHandler(this));
+                server.createContext("/_matrix/app/v1/thirdparty/protocol/"+proto.getKey(), new ProtocolQueryHandler(this));
+            }
+        }
 
         //Unknown endpoints
-        server.createContext("/_matrix/", new UnknownEndpoint());*/
+        server.createContext("/_matrix/", new UnknownEndpoint(logger));
 
         return server;
     }
