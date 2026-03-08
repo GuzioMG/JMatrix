@@ -10,14 +10,25 @@ import java.util.Optional;
 
 public abstract class GuardedMatrixHandler extends MatrixHandler {
     private final String credentials;
-    public final int expectedPathLength;
+    public final int minPathLength;
+    public final int maxPathLength;
     public final String expectedMethod;
     public final Response defaultResponse;
 
     public GuardedMatrixHandler(AppService appService, int expectedPathLength, String expectedMethod, Response defaultResponse) {
         super(appService.logger);
         credentials = appService.registration.hs_token();
-        this.expectedPathLength = expectedPathLength;
+        this.minPathLength = expectedPathLength;
+        this.maxPathLength = expectedPathLength;
+        this.expectedMethod = expectedMethod;
+        this.defaultResponse = defaultResponse;
+    }
+
+    public GuardedMatrixHandler(AppService appService, int minPathLength, int maxPathLength, String expectedMethod, Response defaultResponse) {
+        super(appService.logger);
+        credentials = appService.registration.hs_token();
+        this.minPathLength = minPathLength;
+        this.maxPathLength = maxPathLength;
         this.expectedMethod = expectedMethod;
         this.defaultResponse = defaultResponse;
     }
@@ -26,7 +37,8 @@ public abstract class GuardedMatrixHandler extends MatrixHandler {
     protected Response onRequest(HttpExchange rq, URI rawPath, String[] processedPath, String[] queryParameters, String body) throws Throwable {
         var msgBase = "Possible break-in attempt (tho, more likely, just a misconfigured registration.yaml): ";
 
-        if(processedPath.length-1 /*-1 is required because SaneServer counts the initial "/" as a path component (but ignores the final "/" if present), eg. a call to "/_matrix/app/" has 3 components: "", "_matrix" and "app" - users, however, will likely expect that to only be 2 (ie. "_matrix" and "app"), so that -1 is there to match said expectation*/ != expectedPathLength) return UnknownEndpoint.getError(404, rawPath, "");
+        var realLength = processedPath.length-1; //-1 is required because SaneServer counts the initial "/" as a path component (but ignores the final "/" if present), eg. a call to "/_matrix/app/" has 3 components: "", "_matrix" and "app" - users, however, will likely expect that to only be 2 (ie. "_matrix" and "app"), so that -1 is there to match said expectation.
+        if(realLength < minPathLength || realLength > maxPathLength) return UnknownEndpoint.getError(404, rawPath, "");
         if(!Objects.equals(rq.getRequestMethod(), expectedMethod)) return UnknownEndpoint.getError(405, rawPath, ", when called by a "+rq.getRequestMethod()+" request");
 
         var authHeader = rq.getRequestHeaders().get("Authentication");
@@ -50,10 +62,10 @@ public abstract class GuardedMatrixHandler extends MatrixHandler {
         };
 
         var output = defaultResponse;
-        var result = onRequest(rq, body, processedPath[processedPath.length-1], queryParameters);
+        var result = onRequest(rq, body, processedPath[processedPath.length-1], realLength, queryParameters);
         if (result.isPresent()) output = result.get();
         return output;
     }
 
-    protected abstract Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, String[] queryArgs) throws Throwable;
+    protected abstract Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, int pathLength, String[] queryArgs) throws Throwable;
 }

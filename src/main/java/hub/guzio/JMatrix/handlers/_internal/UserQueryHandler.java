@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public class UserQueryHandler extends GuardedMatrixHandler {
     public UserQueryHandler(AppService appservice){
-        super(appservice, 5, "GET", new Response(200, "json", "[]"));
+        super(appservice, 5, 6, "GET", new Response(200, "json", "[]"));
     }
 
     @Override
-    protected Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, String[] queryArgs) throws Throwable {
+    protected Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, int pathLength, String[] queryArgs) throws Throwable {
         return Optional.empty();
     }
 }

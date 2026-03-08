@@ -13,7 +13,7 @@ public class TransactionHandler extends GuardedMatrixHandler {
     }
 
     @Override
-    protected Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, String[] queryArgs) throws Throwable {
+    protected Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, int pathLength, String[] queryArgs) throws Throwable {
         return Optional.empty();
     }
 }
