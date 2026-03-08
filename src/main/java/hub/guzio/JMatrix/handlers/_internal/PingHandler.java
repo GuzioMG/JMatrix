@@ -7,9 +7,9 @@ import hub.guzio.SaneServer.Response;
 
 import java.util.Optional;
 
-public class UserQueryHandler extends GuardedMatrixHandler {
-    public UserQueryHandler(AppService appservice){
-        super(appservice, 5, 6, "GET", new Response(200, "json", "[]"));
+public class PingHandler extends GuardedMatrixHandler {
+    public PingHandler(AppService appservice){
+        super(appservice, 4, "POST", new Response(200, "json", "{}"));
     }
 
     @Override

@@ -4,10 +4,12 @@ import com.sun.net.httpserver.HttpServer;
 import hub.guzio.JMatrix.data.RegistrationYaml;
 import hub.guzio.JMatrix.handlers.UnknownEndpoint;
 import hub.guzio.JMatrix.handlers._internal.*;
-import hub.guzio.JMatrix.handlers._internal.freestanding.PingHandler;
-import hub.guzio.JMatrix.handlers._internal.protocolQuery.LocationQueryInProtocolHandler;
-import hub.guzio.JMatrix.handlers._internal.protocolQuery.ProtocolQueryHandler;
-import hub.guzio.JMatrix.handlers._internal.protocolQuery.UserQueryInProtocolHandler;
+import hub.guzio.JMatrix.handlers._internal.PingHandler;
+import hub.guzio.JMatrix.handlers._internal.query.LocationQueryInProtocolHandler;
+import hub.guzio.JMatrix.handlers._internal.query.ProtocolQueryHandler;
+import hub.guzio.JMatrix.handlers._internal.query.UserQueryInProtocolHandler;
+import hub.guzio.JMatrix.handlers._internal.query.byProtocol.LocationQueryHandler;
+import hub.guzio.JMatrix.handlers._internal.query.byProtocol.UserQueryHandler;
 import hub.guzio.SaneServer.Logger;
 import hub.guzio.SaneServer.Response;
 
