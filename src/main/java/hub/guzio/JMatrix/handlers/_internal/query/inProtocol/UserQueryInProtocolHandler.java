@@ -1,4 +1,4 @@
-package hub.guzio.JMatrix.handlers._internal.query;
+package hub.guzio.JMatrix.handlers._internal.query.inProtocol;
 
 import com.sun.net.httpserver.HttpExchange;
 import hub.guzio.JMatrix.AppService;
@@ -8,8 +8,8 @@ import hub.guzio.SaneServer.Response;
 
 import java.util.Optional;
 
-public class LocationQueryInProtocolHandler extends GuardedMatrixHandler {
-    public LocationQueryInProtocolHandler(AppService appservice, Protocol proto){
+public class UserQueryInProtocolHandler extends GuardedMatrixHandler {
+    public UserQueryInProtocolHandler(AppService appservice, Protocol proto){
         super(appservice, 6, "GET", new Response(200, "json", "[]"));
     }
 

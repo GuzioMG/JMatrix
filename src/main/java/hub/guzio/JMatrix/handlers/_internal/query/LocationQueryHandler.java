@@ -1,4 +1,4 @@
-package hub.guzio.JMatrix.handlers._internal.query.byProtocol;
+package hub.guzio.JMatrix.handlers._internal.query;
 
 import com.sun.net.httpserver.HttpExchange;
 import hub.guzio.JMatrix.AppService;
