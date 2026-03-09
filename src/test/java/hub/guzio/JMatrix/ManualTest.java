@@ -13,14 +13,17 @@ import java.util.Scanner;
 
 public class ManualTest {
     static void main() throws IOException {
-        var sv = HttpServer.create(new InetSocketAddress(8080), 1000);
         var in = new Scanner(System.in);
-        System.out.print("Enter AppService Token: ");
+        System.out.print("Enter AppService Token (for both hs and as): ");
+        var token = in.next();
+
+        var appservice = new TestedService(token);
+        var sv = appservice.serve(new InetSocketAddress(8080));
         var cli = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
         HttpRequest rq;
 
         try { rq = HttpRequest.newBuilder(new URI("https://api.chat.guziohub.ovh/_matrix/client/v1/appservice/javatest/ping"))
-                .header("Authorization", "Bearer "+in.next())
+                .header("Authorization", "Bearer "+token)
                 .POST(HttpRequest.BodyPublishers.ofString("{}")).build();
         } catch (Throwable e){
             System.err.print("Wrong token!"); //This is absolutely not what happens, but it's a nice'n'simple error message.
@@ -32,15 +35,17 @@ public class ManualTest {
         System.out.println("Started!");
         while (true){
             try {
-                if (Objects.equals(in.next(), "q")) {
+                String next = in.next();
+                if (Objects.equals(next, "q")) {
                     System.out.print("Exiting...");
                     sv.stop(5);
                     cli.shutdownNow();
                     return;
+                } else if (Objects.equals(next, "p")) {
+                    HttpResponse<String> body = cli.send(rq, HttpResponse.BodyHandlers.ofString());
+                    System.out.println("Sent request.");
+                    System.out.print(body.body());
                 }
-                HttpResponse<String> body = cli.send(rq, HttpResponse.BodyHandlers.ofString());
-                System.out.println("Sent request.");
-                System.out.print(body.body());
             }
             catch (Throwable e) {
                 e.printStackTrace(System.err);
