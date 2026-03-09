@@ -15,6 +15,6 @@ public class LocationQueryHandler extends GuardedMatrixHandler {
     @Override
     protected Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, int pathLength, String[] queryArgs) throws Throwable {
         if (pathLength == 6) return Optional.of(new Response(404, "json", "{\"errcode\":\"M_NOT_FOUND\",\"error\":\"Unknown protocol.\"}"));
-        return Optional.empty();
+        return Optional.empty(); //TODO
     }
 }
