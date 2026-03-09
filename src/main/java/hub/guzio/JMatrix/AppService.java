@@ -44,13 +44,13 @@ public abstract class AppService {
 
         //Core endpoints
         server.createContext("/_matrix/app/v1/transactions/", new TransactionHandler(this));
-        server.createContext("/_matrix/app/v1/ping/", new PingHandler(this));
+        server.createContext("/_matrix/app/v1/ping", new PingHandler(this));
         server.createContext("/_matrix/app/v1/users/", new UserCreateHandler(this));
         server.createContext("/_matrix/app/v1/rooms/", new RoomCreateHandler(this));
 
         //Static protocol endpoints
-        server.createContext("/_matrix/app/v1/thirdparty/user/", new UserQueryHandler(this));
-        server.createContext("/_matrix/app/v1/thirdparty/location/", new LocationQueryHandler(this));
+        server.createContext("/_matrix/app/v1/thirdparty/user", new UserQueryHandler(this));
+        server.createContext("/_matrix/app/v1/thirdparty/location", new LocationQueryHandler(this));
 
         //Dynamic protocol endpoints
         if (registration.protocols().isPresent()){

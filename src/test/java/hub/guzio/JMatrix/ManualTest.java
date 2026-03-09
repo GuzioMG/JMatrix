@@ -31,6 +31,7 @@ public class ManualTest {
             return;
         }
 
+        sv.createContext("/testurl/", new TestEndpoint());
         sv.start();
         System.out.println("Started!");
         while (true){
