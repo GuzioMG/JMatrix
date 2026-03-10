@@ -38,7 +38,8 @@ public abstract class GuardedMatrixHandler extends MatrixHandler {
         var msgBase = "Possible break-in attempt (tho, more likely, just a misconfigured registration.yaml): ";
 
         var realLength = processedPath.length-1; //-1 is required because SaneServer counts the initial "/" as a path component (but ignores the final "/" if present), eg. a call to "/_matrix/app/" has 3 components: "", "_matrix" and "app" - users, however, will likely expect that to only be 2 (ie. "_matrix" and "app"), so that -1 is there to match said expectation.
-        if(realLength < minPathLength || realLength > maxPathLength) return UnknownEndpoint.getError(404, rawPath, "");
+        var pathArg = processedPath[realLength];
+        if(realLength < minPathLength || realLength > maxPathLength || !pathIsReallyValid(pathArg, realLength)) return UnknownEndpoint.getError(404, rawPath, "");
         if(!Objects.equals(rq.getRequestMethod(), expectedMethod)) return UnknownEndpoint.getError(405, rawPath, ", when called by a "+rq.getRequestMethod()+" request");
 
         var authHeader = rq.getRequestHeaders().get("Authentication");
@@ -62,9 +63,13 @@ public abstract class GuardedMatrixHandler extends MatrixHandler {
         };
 
         var output = defaultResponse;
-        var result = onRequest(rq, body, processedPath[processedPath.length-1], realLength, queryParameters);
+        var result = onRequest(rq, body, pathArg, realLength, queryParameters);
         if (result.isPresent()) output = result.get();
         return output;
+    }
+
+    protected boolean pathIsReallyValid(String pathArg, int pathLength){
+        return true;
     }
 
     protected abstract Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, int pathLength, String[] queryArgs) throws Throwable;
