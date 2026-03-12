@@ -6,7 +6,7 @@ import hub.guzio.SaneServer.Logger;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.net.http.HttpClient;
+import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Objects;
@@ -29,15 +29,11 @@ public class ManualTest {
         }
 
         var sv = appservice.serve(new InetSocketAddress(8080));
-        var cli = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
-        HttpRequest rq;
+        HttpRequest.Builder rq;
 
-        try { rq = HttpRequest.newBuilder(new URI("https://api.chat.guziohub.ovh/_matrix/client/v1/appservice/javatest/ping"))
-                .header("Authorization", "Bearer "+token)
-                .POST(HttpRequest.BodyPublishers.ofString("{}")).build();
-        } catch (Throwable e){
-            System.err.print("Wrong token!"); //This is absolutely not what happens, but it's a nice'n'simple error message.
-            cli.close();
+        try { rq = HttpRequest.newBuilder(new URI("https://api.chat.guziohub.ovh/_matrix/client/v1/appservice/javatest/ping")).POST(HttpRequest.BodyPublishers.ofString("{}")); }
+        catch (URISyntaxException e){
+            System.err.print("Somehow, this previously-correct URI was wrong?");
             return;
         }
 
@@ -51,11 +47,10 @@ public class ManualTest {
                 String next = in.next();
                 if (Objects.equals(next, "q")) {
                     System.out.print("Exiting...");
-                    sv.stop(5);
-                    cli.shutdownNow();
+                    appservice.close();
                     return;
                 } else if (Objects.equals(next, "p")) {
-                    HttpResponse<String> body = cli.send(rq, HttpResponse.BodyHandlers.ofString());
+                    HttpResponse<String> body = appservice.sendAuthenticated(rq);
                     System.out.println("Sent request.");
                     System.out.print(body.body());
                 }
