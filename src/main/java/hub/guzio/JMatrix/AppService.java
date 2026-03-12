@@ -1,6 +1,7 @@
 package hub.guzio.JMatrix;
 
 import com.sun.net.httpserver.HttpServer;
+import hub.guzio.JMatrix.authProcessors.DefaultAuth;
 import hub.guzio.JMatrix.data.RegistrationYaml;
 import hub.guzio.JMatrix.handlers.UnknownEndpoint;
 import hub.guzio.JMatrix.handlers._internal.*;
@@ -23,17 +24,34 @@ public abstract class AppService {
     public final Logger logger;
     public final int backlog;
     public final RegistrationYaml registration;
+    public final AuthProcessor auth;
 
     protected AppService(Logger logger, int backlog, RegistrationYaml registration){
         this.logger = logger;
         this.backlog = backlog;
         this.registration = registration;
+        this.auth = new DefaultAuth(registration.hs_token(), logger);
     }
 
     protected AppService(Logger logger, RegistrationYaml registration){
         this.logger = logger;
         this.backlog = 1024;
         this.registration = registration;
+        this.auth = new DefaultAuth(registration.hs_token(), logger);
+    }
+
+    protected AppService(Logger logger, int backlog, RegistrationYaml registration, AuthProcessor auth){
+        this.logger = logger;
+        this.backlog = backlog;
+        this.registration = registration;
+        this.auth = auth;
+    }
+
+    protected AppService(Logger logger, RegistrationYaml registration, AuthProcessor auth){
+        this.logger = logger;
+        this.backlog = 1024;
+        this.registration = registration;
+        this.auth = auth;
     }
 
     public HttpServer serve(InetSocketAddress port) throws IllegalStateException, IOException {

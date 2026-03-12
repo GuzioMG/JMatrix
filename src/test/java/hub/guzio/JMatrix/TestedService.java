@@ -12,6 +12,10 @@ public class TestedService extends AppService{
         super(new Logger(), new RegistrationYaml(token, token, "jmatrixtest", new Namespaces(), Optional.empty(), Optional.empty(), Optional.empty(), "_jmatrix_test_user", null));
     }
 
+    protected TestedService(String token, AuthProcessor auth) {
+        super(new Logger(), new RegistrationYaml(token, token, "jmatrixtest", new Namespaces(), Optional.empty(), Optional.empty(), Optional.empty(), "_jmatrix_test_user", null), auth);
+    }
+
     @Override
     public Optional<Response> onTransaction() throws Throwable {
         return Optional.empty();

@@ -1,6 +1,7 @@
 package hub.guzio.JMatrix;
 
-import com.sun.net.httpserver.HttpServer;
+import hub.guzio.JMatrix.authProcessors.TestingOrDevelopmentOnlyAuthProcessorUnsuitableForProductionDueToSevereSecurityConsequences;
+import hub.guzio.SaneServer.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,12 +13,21 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class ManualTest {
-    static void main() throws IOException {
-        var in = new Scanner(System.in);
-        System.out.print("Enter AppService Token (for both hs and as): ");
-        var token = in.next();
+    static void main(String[] args) throws IOException {
+        String token;
+        AppService appservice;
 
-        var appservice = new TestedService(token);
+        if(args.length > 1){
+            System.out.println("Expected at most one argument!");
+            return;
+        } else if (args.length == 0) {
+            token = "devnull";
+            appservice = new TestedService(token, new TestingOrDevelopmentOnlyAuthProcessorUnsuitableForProductionDueToSevereSecurityConsequences(new Logger()));
+        } else {
+            token = args[0];
+            appservice = new TestedService(token);
+        }
+
         var sv = appservice.serve(new InetSocketAddress(8080));
         var cli = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
         HttpRequest rq;
@@ -33,7 +43,9 @@ public class ManualTest {
 
         sv.createContext("/testurl/", new TestEndpoint());
         sv.start();
+        var in = new Scanner(System.in);
         System.out.println("Started!");
+
         while (true){
             try {
                 String next = in.next();
