@@ -44,7 +44,7 @@ public class ManualTest {
         sv.createContext("/testurl/", new TestEndpoint());
         sv.start();
         var in = new Scanner(System.in);
-        System.out.println("Started!");
+        System.out.println("Started with YAML:\n"+appservice.registration.toString());
 
         while (true){
             try {
