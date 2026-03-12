@@ -6,6 +6,7 @@ import hub.guzio.JMatrix.data.RegistrationYaml;
 import hub.guzio.JMatrix.handlers.UnknownEndpoint;
 import hub.guzio.JMatrix.handlers._internal.*;
 import hub.guzio.JMatrix.handlers._internal.PingHandler;
+import hub.guzio.JMatrix.handlers._internal.query.UnknownProtocolQueryHandler;
 import hub.guzio.JMatrix.handlers._internal.query.inProtocol.LocationQueryInProtocolHandler;
 import hub.guzio.JMatrix.handlers._internal.query.inProtocol.ProtocolQueryHandler;
 import hub.guzio.JMatrix.handlers._internal.query.inProtocol.UserQueryInProtocolHandler;
@@ -68,14 +69,15 @@ public abstract class AppService {
 
         //Static protocol endpoints
         server.createContext("/_matrix/app/v1/thirdparty/user", new UserQueryHandler(this));
+        server.createContext("/_matrix/app/v1/thirdparty/protocol/", new UnknownProtocolQueryHandler(this));
         server.createContext("/_matrix/app/v1/thirdparty/location", new LocationQueryHandler(this));
 
         //Dynamic protocol endpoints
         if (registration.protocols().isPresent()){
             for(var proto : registration.protocols().get().entrySet()){
                 server.createContext("/_matrix/app/v1/thirdparty/user/"+proto.getKey(), new UserQueryInProtocolHandler(this, proto.getValue()));
-                server.createContext("/_matrix/app/v1/thirdparty/location/"+proto.getKey(), new LocationQueryInProtocolHandler(this, proto.getValue()));
                 server.createContext("/_matrix/app/v1/thirdparty/protocol/"+proto.getKey(), new ProtocolQueryHandler(this, proto.getValue()));
+                server.createContext("/_matrix/app/v1/thirdparty/location/"+proto.getKey(), new LocationQueryInProtocolHandler(this, proto.getValue()));
             }
         }
 
