@@ -5,15 +5,23 @@ import hub.guzio.JMatrix.AppService;
 import hub.guzio.JMatrix.handlers.GuardedMatrixHandler;
 import hub.guzio.SaneServer.Response;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class TransactionHandler extends GuardedMatrixHandler {
+    final AppService as;
+    List<String> handled = new ArrayList<String>();
+
     public TransactionHandler(AppService appservice){
         super(appservice, 5, "PUT", new Response(200, "json", "{}"));
+        as = appservice;
     }
 
     @Override
-    protected Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, int pathLength, String[] queryArgs) throws Throwable {
-        return Optional.empty(); //TODO
+    protected Optional<Response> onRequest(HttpExchange rq, String body, String txnId, int pathLength, String[] queryArgs) throws Throwable {
+        if(handled.contains(txnId)) return Optional.empty();
+        handled.add(txnId);
+        return as.onTransaction(body);
     }
 }

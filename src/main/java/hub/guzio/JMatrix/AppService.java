@@ -87,7 +87,7 @@ public abstract class AppService {
         return server;
     }
 
-    public abstract Optional<Response> onTransaction() throws Throwable;
-    public abstract Optional<Response> onUserRequest() throws Throwable;
-    public abstract Optional<Response> onRoomRequest() throws Throwable;
+    public abstract Optional<Response> onTransaction(String body) throws Throwable;
+    public abstract Optional<Response> onUserRequest(String userId) throws Throwable;
+    public abstract Optional<Response> onRoomRequest(String roomAlias) throws Throwable;
 }

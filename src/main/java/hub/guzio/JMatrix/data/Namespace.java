@@ -3,12 +3,12 @@ package hub.guzio.JMatrix.data;
 import org.intellij.lang.annotations.RegExp;
 import org.jetbrains.annotations.NotNull;
 
-public record FieldType(
-        @NotNull String placeholder,
-        @NotNull @RegExp String regexp
+public record Namespace(
+        boolean exclusive,
+        @NotNull @RegExp String regex
 ) {
     @Override
     public @NotNull String toString() {
-        return "{\"placeholder\":\""+placeholder+"\",\"regexp\":\""+regexp+"\"}";
+        return "    - regex: "+regex+"\n    exclusive: "+exclusive+"\n";
     }
 }

@@ -26,9 +26,14 @@ public record RegistrationYaml(
         if(Objects.isNull(url)) uriString = "null";
         else uriString = "\""+url+"\"";
 
-        var output = "as_token: \"" + as_token + "\"\nhs_token: \"" + hs_token + "\"\nid: " + id + "\nnamespaces:\n" + namespaces.serialize();
+        var output = "as_token: \"" + as_token + "\"\nhs_token: \"" + hs_token + "\"\nid: " + id + "\nnamespaces:\n" + namespaces;
 
-        if (protocols.isPresent()) output += "protocols:\n  - \"" + String.join("\"\n  - \"", protocols.get().keySet()) + "\"\n";
+        if (protocols.isPresent()) {
+            var protocols = this.protocols.get();
+            if (protocols.isEmpty()) output += "protocols:\n";
+            else output += "protocols:\n  - \"" + String.join("\"\n  - \"", protocols.keySet()) + "\"\n";
+        }
+
         if (rate_limited.isPresent()) output += "rate_limited: " + rate_limited.get() + "\n";
         if (receive_ephemeral.isPresent()) output += "receive_ephemeral: " + receive_ephemeral.get() + "\n";
 
