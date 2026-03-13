@@ -5,7 +5,6 @@ import hub.guzio.SaneServer.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -13,7 +12,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class ManualTest {
-    static void main(String[] args) throws IOException {
+    static void main(String[] args) throws IOException, URISyntaxException {
         String token;
         AppService appservice;
 
@@ -29,13 +28,7 @@ public class ManualTest {
         }
 
         var sv = appservice.serve(new InetSocketAddress(8080));
-        HttpRequest.Builder rq;
-
-        try { rq = HttpRequest.newBuilder(new URI("https://api.chat.guziohub.ovh/_matrix/client/v1/appservice/javatest/ping")).POST(HttpRequest.BodyPublishers.ofString("{}")); }
-        catch (URISyntaxException e){
-            System.err.print("Somehow, this previously-correct URI was wrong?");
-            return;
-        }
+        HttpRequest.Builder rq = appservice.makePost("/_matrix/client/v1/appservice/javatest/ping", "{}");
 
         sv.createContext("/testurl/", new TestEndpoint());
         sv.start();

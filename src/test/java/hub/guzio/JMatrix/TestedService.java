@@ -6,15 +6,17 @@ import hub.guzio.SaneServer.Logger;
 import hub.guzio.SaneServer.Response;
 
 import javax.management.ListenerNotFoundException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 public class TestedService extends AppService{
-    protected TestedService(String token) {
-        super(new Logger(), getRegistration(token));
+    protected TestedService(String token) throws URISyntaxException {
+        super(new Logger(), getRegistration(token), new URI("https://api.chat.guziohub.ovh/"));
     }
 
-    protected TestedService(String token, AuthProcessor auth) {
-        super(new Logger(), getRegistration(token));
+    protected TestedService(String token, AuthProcessor auth) throws URISyntaxException {
+        super(new Logger(), getRegistration(token), auth, new URI("https://api.chat.guziohub.ovh/"));
     }
 
     @Override
