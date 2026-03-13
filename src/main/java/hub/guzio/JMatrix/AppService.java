@@ -31,12 +31,13 @@ import java.util.Optional;
 
 public abstract class AppService implements AutoCloseable {
     Optional<HttpServer> attachedServer = Optional.empty();
+    boolean isClosed = false;
     @NotNull public HttpClient sender = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
 
     public final Logger logger;
     public final int backlog;
     public final RegistrationYaml registration;
-    public AuthProcessor auth;
+    public final AuthProcessor auth;
 
     protected AppService(@NotNull Logger logger, int backlog, @NotNull RegistrationYaml registration){
         this.logger = logger;
@@ -67,12 +68,14 @@ public abstract class AppService implements AutoCloseable {
     }
 
     public HttpServer serve(@Nullable InetSocketAddress port) throws IllegalArgumentException, IOException {
+        if (isClosed) throw new IllegalStateException("Attempted to serve a closed appservice.");
+
         if (attachedServer.isPresent()) {
             if (Objects.equals(attachedServer.get().getAddress(), port) && !Objects.isNull(port)) return attachedServer.get();
             else throw new IllegalArgumentException("Attempted to re-serve an already served appservice on a different port.");
         }
 
-        if (Objects.isNull(port)) throw new IllegalArgumentException("Called serve() with port==null, when the appservice wasn't already served.");
+        if (Objects.isNull(port)) throw new IllegalArgumentException("Called serve() with port==null (ie. tried to access the underlying server), nut the appservice hasn't yet been served.");
 
         HttpServer server = HttpServer.create(port, backlog);
         attachedServer = Optional.of(server);
@@ -103,23 +106,38 @@ public abstract class AppService implements AutoCloseable {
         return server;
     }
 
-    public HttpResponse<String> sendAuthenticated(@NotNull HttpRequest.Builder rq) throws IOException, InterruptedException {
+    public HttpResponse<String> sendAuthenticated(@NotNull HttpRequest.Builder rq) throws IOException, InterruptedException, IllegalStateException {
+        if (isClosed) throw new IllegalStateException("Attempted to send a request from a closed appservice.");
         return sender.send(rq.setHeader("Authorization", "Bearer "+registration.as_token()).build(), HttpResponse.BodyHandlers.ofString());
     }
 
     public void close(int timeout){
+        if (isClosed) return;
+
         try { attachedServer.orElseThrow().stop(timeout); }
         catch (Throwable e) { /*We don't care if nothing was attached yet. If it wasn't - isn't obviously stopped.*/ }
 
         boolean safeExit;
         try { safeExit = sender.awaitTermination(Duration.of(timeout, ChronoUnit.SECONDS)); }
-        catch (Throwable e) {safeExit = sender.isTerminated(); }
-        if (!safeExit) sender.shutdownNow();
-        sender.close();
+        catch (Throwable e) {
+            try{ safeExit = sender.isTerminated(); }
+            catch (Throwable eee){
+                //This should never throw anything; just making sure that safeExit will get set to false, in case the wildest of edge-cases happen.
+                safeExit = false;
+            }
+        }
+
+        try {
+            if (!safeExit) sender.shutdownNow();
+            //sender.close(); <-- This was supposed to be here, but - upon further inspection of the class - it seems like this mf has a hardcoded timeout of ONE DAY! (And also just calls the other stuff that I had, anyway.) Leaving this comment in, to make sure that I remember to never accidentally put .close() here again.
+        }
+        catch (Throwable e) { /*Same case as above, but it's isClosed getting set to true.*/ }
+
+        isClosed = true;
     }
 
     @Override
-    public void close() { close(5); }
+    public void close() { close(3); }
 
     public abstract Optional<Response> onTransaction(String body) throws Throwable;
     public abstract Optional<Response> onUserRequest(String userId) throws Throwable;
