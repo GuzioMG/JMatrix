@@ -19,10 +19,12 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.zip.DataFormatException;
 
 public abstract class AppService implements AutoCloseable {
     Optional<HttpServer> attachedServer = Optional.empty();
     boolean isClosed = false;
+    final PingHandler pings;
     @NotNull public HttpClient sender = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
 
     public final Logger logger;
@@ -39,6 +41,7 @@ public abstract class AppService implements AutoCloseable {
         this.url = url;
 
         this.auth = new DefaultAuth(registration.hs_token(), logger);
+        pings = new PingHandler(this);
     }
 
     protected AppService(@NotNull Logger logger, @NotNull RegistrationYaml registration, @NotNull URI url){
@@ -48,6 +51,7 @@ public abstract class AppService implements AutoCloseable {
 
         this.auth = new DefaultAuth(registration.hs_token(), logger);
         this.backlog = 1024;
+        pings = new PingHandler(this);
     }
 
     protected AppService(@NotNull Logger logger, int backlog, @NotNull RegistrationYaml registration, @NotNull AuthProcessor auth, @NotNull URI url){
@@ -56,6 +60,8 @@ public abstract class AppService implements AutoCloseable {
         this.registration = registration;
         this.auth = auth;
         this.url = url;
+
+        pings = new PingHandler(this);
     }
 
     protected AppService(@NotNull Logger logger, @NotNull RegistrationYaml registration, @NotNull AuthProcessor auth, @NotNull URI url){
@@ -65,6 +71,7 @@ public abstract class AppService implements AutoCloseable {
         this.url = url;
 
         this.backlog = 1024;
+        pings = new PingHandler(this);
     }
 
 
@@ -133,6 +140,34 @@ public abstract class AppService implements AutoCloseable {
     public HttpResponse<String> POST(String endpoint, String body) throws URISyntaxException, IOException, InterruptedException, IllegalStateException, IllegalArgumentException {
         return sendAuthenticated(makePost(endpoint, body));
     }
+
+
+    public boolean ping(boolean silent) {
+        var txId = pings.pullTransactionId();
+        var outBody = "{\"transaction_id\": "+txId+"}";
+        if(!silent) logger.log("An attempt to bidirectionally ping as ID:"+txId+" was made...");
+
+        try {
+            var result = POST("/_matrix/client/v1/appservice/" + registration.id() + "/ping", outBody);
+            var inBody = result.body();
+            var code = result.statusCode();
+
+            if(code != 200) throw new IOException("Ping request+response cycle was successful, but the ping itself was not: Homeserver's returned code was "+code+" (not the expected 200). The exact nature of this error will depend on the contents of the response body (which is „"+inBody+"”). If it looks entirely un-Matrix-y (please refer to https://spec.matrix.org/v1.17/application-service-api/#pinging for details as to how a ping response should look like), it's likely that your proxy setup is a bit borked (or a wrong homeserver URL was passed to the appservice) and something-that-is-not-your-homeserver was reached instead. Otherwise, many things may have happened. Anything, from wrong appservice->homeserver auth, through homeserver->appservice auth, through the homeserver being completely unable to reach the appservice due to a borked proxy setup, through forgetting to register the appservice with the homeserver (incl. a homeserver restart, if using one from the Synapse family), to the homeserver reaching something-that-is-not-this-appservice (also, likely, due to a borked proxy setup or a wrong URL). For more clues, please refer to the aforementioned link and the response body, as well as the logs above (if the homeserver was able to reach the appservice in any capacity, there should be SOMETHING indicating that - either an error message (an auth-failure warning, or any other unspecified error), or something like „Responding to ping "+outBody+"” if the ping was received successfully and a response attempt was made, but your homeserver didn't accept it for some reason).");
+            else if(pings.hasReceived(txId)){
+                if(!silent) logger.log("Homeserver responded to "+txId+" successfully! Got homeserver->appservice->homeserver (ie. NOT the complete appservice->homeserver->appservice->homeserver->appservice round-trip) time: "+inBody);
+                return true;
+            }
+            else if (inBody.contains("{") && inBody.contains("\"duration_ms\"") && inBody.contains(":") && inBody.contains("}")) throw new IllegalStateException("Homeserver responded to the ping successfully! Got homeserver->appservice time: "+inBody+". Great!, right? ...Unfortunately, it got that result even though it never actually pinged back to this appservice. That means that the appservice was able to reach the homeserver, but the homeserver cannot. Instead, it must've reached something-that-is-not-this-appservice-but-responds-in-a-similar-enough-fashion-that-it-fooled-the-homeserver (well... the opposite might be true, too, ie. this appservice didn't actually reach your homeserver). This most likely indicates a broken proxy setup.");
+            else throw new DataFormatException("Homeserver responded to the ping \"successfully\", but the response was definitely not a valid Matrix JSON for pings. Instead, got: „"+inBody+"”. Most likely, the appservice was able to reached something-that-is-not-your-homeserver. This indicates a broken proxy setup or a wrong homeserver URL passed to the appservice.");
+        }
+
+        catch (Throwable e) {
+            if(!silent) logger.err("Ping flow ID:"+txId+" ended with a failure: ", e);
+            return false;
+        }
+    }
+
+    public boolean ping() { return ping(false); }
 
 
     public void close(int timeout){

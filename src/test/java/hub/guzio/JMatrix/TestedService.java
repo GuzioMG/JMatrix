@@ -36,13 +36,15 @@ public class TestedService extends AppService{
     }
 
     private static RegistrationYaml getRegistration(String token){
-        return new RegistrationYaml(token, token,
+        return new RegistrationYaml(
+                token,
+                token,
                 "jmatrixtest",
                 new Namespaces(Optional.empty(), Optional.empty(), Optional.empty()),
                 Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
-                "_jmatrix_test_user",
+                "_jmatrixtest_test_user",
                 null
         );
     }

@@ -28,13 +28,12 @@ public class ManualTest {
         }
 
         var sv = appservice.serve(new InetSocketAddress(8080));
-        HttpRequest.Builder rq = appservice.makePost("/_matrix/client/v1/appservice/javatest/ping", "{}");
-
         sv.createContext("/testurl/", new TestEndpoint());
         sv.start();
-        var in = new Scanner(System.in);
-        System.out.println("Started with YAML:\n"+appservice.registration.toString());
 
+        var in = new Scanner(System.in);
+
+        System.out.println("Started with YAML:\n"+appservice.registration.toString());
         while (true){
             try {
                 String next = in.next();
@@ -42,11 +41,7 @@ public class ManualTest {
                     System.out.print("Exiting...");
                     appservice.close();
                     return;
-                } else if (Objects.equals(next, "p")) {
-                    HttpResponse<String> body = appservice.sendAuthenticated(rq);
-                    System.out.println("Sent request.");
-                    System.out.print(body.body());
-                }
+                } else if (Objects.equals(next, "p")) appservice.ping();
             }
             catch (Throwable e) {
                 e.printStackTrace(System.err);
