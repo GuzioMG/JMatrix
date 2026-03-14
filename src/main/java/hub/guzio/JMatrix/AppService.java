@@ -25,7 +25,7 @@ public abstract class AppService implements AutoCloseable {
     Optional<HttpServer> attachedServer = Optional.empty();
     boolean isClosed = false;
     final PingHandler pings;
-    @NotNull public HttpClient sender = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
+    @NotNull public HttpClient sender = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build(); //Not final because implementations may wish to override it. Not giving it a whole constructor because it's gotta be a very rare occurrence.
 
     public final Logger logger;
     public final int backlog;
@@ -102,9 +102,9 @@ public abstract class AppService implements AutoCloseable {
         //Dynamic protocol endpoints
         if (registration.protocols().isPresent()){
             for(var proto : registration.protocols().get().entrySet()){
-                server.createContext("/_matrix/app/v1/thirdparty/user/"+proto.getKey(), new UserQueryInProtocolHandler(this, proto.getValue(), proto.getKey()));
-                server.createContext("/_matrix/app/v1/thirdparty/protocol/"+proto.getKey(), new ProtocolQueryHandler(this, proto.getValue(), proto.getKey()));
-                server.createContext("/_matrix/app/v1/thirdparty/location/"+proto.getKey(), new LocationQueryInProtocolHandler(this, proto.getValue(), proto.getKey()));
+                server.createContext("/_matrix/app/v1/thirdparty/user/"+proto.getKey(), new UserQueryInProtocolHandler(this, proto.getValue()));
+                server.createContext("/_matrix/app/v1/thirdparty/protocol/"+proto.getKey(), new ProtocolQueryHandler(this, proto.getValue()));
+                server.createContext("/_matrix/app/v1/thirdparty/location/"+proto.getKey(), new LocationQueryInProtocolHandler(this, proto.getValue()));
             }
         }
 
@@ -167,7 +167,7 @@ public abstract class AppService implements AutoCloseable {
         }
     }
 
-    public boolean ping() { return ping(false); }
+    public boolean ping() { return ping(false); } //Return value not used in our test code, but is likely to be used by a real app.
 
 
     public void close(int timeout){
@@ -202,15 +202,4 @@ public abstract class AppService implements AutoCloseable {
     public abstract Optional<Response> onTransaction(String body) throws Throwable;
     public abstract Optional<Response> onUserRequest(String userId) throws Throwable;
     public abstract Optional<Response> onRoomRequest(String roomAlias) throws Throwable;
-
-
-    public static String[] stringifyArray(Object[] objects){
-        var strings = new String[objects.length];
-        int index = 0;
-        for (Object obj : objects){
-            strings[index] = obj.toString();
-            index++;
-        }
-        return strings;
-    }
 }

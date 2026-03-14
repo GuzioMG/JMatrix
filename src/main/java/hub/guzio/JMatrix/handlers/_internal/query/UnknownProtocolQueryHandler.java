@@ -5,7 +5,6 @@ import hub.guzio.JMatrix.AppService;
 import hub.guzio.JMatrix.handlers.GuardedMatrixHandler;
 import hub.guzio.SaneServer.Response;
 
-import java.util.Objects;
 import java.util.Optional;
 
 public class UnknownProtocolQueryHandler extends GuardedMatrixHandler {
@@ -16,7 +15,7 @@ public class UnknownProtocolQueryHandler extends GuardedMatrixHandler {
     }
 
     @Override
-    protected Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, int pathLength, String[] queryArgs) throws Throwable {
+    protected Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, int pathLength, String[] queryArgs) {
         return Optional.empty();
     }
 }

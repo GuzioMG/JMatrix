@@ -10,7 +10,7 @@ public class UnknownEndpoint extends MatrixHandler {
     public UnknownEndpoint(Logger logger) { super(logger); }
 
     @Override
-    protected Response onRequest(HttpExchange rq, URI path, String[] pathButUseless, String[] qp, String body) throws Throwable {
+    protected Response onRequest(HttpExchange rq, URI path, String[] pathButUseless, String[] qp, String body) {
         return getError(404, path, "");
     }
 

@@ -10,8 +10,8 @@ import java.util.*;
 
 public class PingHandler extends GuardedMatrixHandler {
     int count = 0;
-    List<String> received = Collections.synchronizedList(new ArrayList<>());
-    Logger logger;
+    final List<String> received = Collections.synchronizedList(new ArrayList<>());
+    final Logger logger;
 
     public PingHandler(AppService appservice){
         super(appservice, 4, "POST", new Response(200, "json", "{}"));

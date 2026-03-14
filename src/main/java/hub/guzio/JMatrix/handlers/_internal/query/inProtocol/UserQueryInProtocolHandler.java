@@ -12,17 +12,15 @@ import java.util.Optional;
 
 public class UserQueryInProtocolHandler extends GuardedMatrixHandler {
     final Protocol proto;
-    final String protoName;
 
-    public UserQueryInProtocolHandler(AppService appservice, Protocol proto, String protoName){
+    public UserQueryInProtocolHandler(AppService appservice, Protocol proto){
         super(appservice, 6, "GET", new Response(404, "json", "{\"errcode\":\"M_NOT_FOUND\",\"error\":\"The requested protocol was found, but there were no users found as part of said protocol, that would match the specified query.\"}"));
         this.proto = proto;
-        this.protoName = protoName;
     }
 
     @Override
     protected Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, int pathLength, String[] queryArgs) throws Throwable {
-        if(!Objects.equals(pathArg, protoName)) return Optional.of(UnknownProtocolQueryHandler.UNKNOWN_PROTOCOL_RESPONSE);
+        if(!Objects.equals(pathArg, proto.name)) return Optional.of(UnknownProtocolQueryHandler.UNKNOWN_PROTOCOL_RESPONSE);
         return proto.onUsersQueryByProtocol(queryArgs);
     }
 }

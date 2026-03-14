@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import static hub.guzio.JMatrix.AppService.stringifyArray;
+import static hub.guzio.JMatrix._internal.Utils.stringifyArray;
 
 public record Namespaces(
         @NotNull Optional<List<Namespace>> aliases,

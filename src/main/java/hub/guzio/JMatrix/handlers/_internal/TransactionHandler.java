@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class TransactionHandler extends GuardedMatrixHandler {
     final AppService as;
-    List<String> handled = new ArrayList<String>();
+    final List<String> handled = new ArrayList<>();
 
     public TransactionHandler(AppService appservice){
         super(appservice, 5, "PUT", new Response(200, "json", "{}"));

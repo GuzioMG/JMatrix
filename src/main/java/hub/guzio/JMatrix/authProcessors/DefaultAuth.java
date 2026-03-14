@@ -30,14 +30,14 @@ public class DefaultAuth implements AuthProcessor {
             }
             var msg = "No valid token was provided. Or maybe multiple were, this code doesn't care. The bottom line is that exactly 1 (one) auth token was expected, but that wasn't the case (got "+authHeaderStringified+" (ie. something of length "+length+") instead). Treating this request as unauthenticated.";
             l.wrn(msgBase+msg);
-            return Optional.of(new Response(401, "json", "{\"errcode\":\"M_MISSING_TOKEN\",\"error\":\"" + msg.replaceAll("\"", "\\\"") + "\"}"));
+            return Optional.of(new Response(401, "json", "{\"errcode\":\"M_MISSING_TOKEN\",\"error\":\"" + msg.replaceAll("\"", "\\\"") + "\"}")); //That escape is not redundant - JSON's gonna sh!t its pants if it ever sees a " without a \ in a string.
         }
 
         var authToken = authHeader.getFirst();
         if (!Objects.equals(authToken, credentials)) {
             var msg = "The homeserver gave this appservice an invalid token (got \""+authToken+"\" instead of the expected value).";
             l.wrn(msgBase+msg);
-            return Optional.of(new Response(403, "json", "{\"errcode\":\"M_UNKNOWN_TOKEN\",\"error\":\"" + msg.replaceAll("\"", "\\\"") + "\"}"));
+            return Optional.of(new Response(403, "json", "{\"errcode\":\"M_UNKNOWN_TOKEN\",\"error\":\"" + msg.replaceAll("\"", "\\\"") + "\"}")); //That escape is not redundant - JSON's gonna sh!t its pants if it ever sees a " without a \ in a string.
         }
 
         return Optional.empty();

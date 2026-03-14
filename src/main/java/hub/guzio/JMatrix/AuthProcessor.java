@@ -1,6 +1,5 @@
 package hub.guzio.JMatrix;
 
-import hub.guzio.SaneServer.Logger;
 import hub.guzio.SaneServer.Response;
 
 import java.util.Optional;

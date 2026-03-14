@@ -12,7 +12,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 public abstract class MatrixHandler extends SmartHandler {
-    protected Logger l;
+    protected final Logger l;
 
     public MatrixHandler(Logger logger) {
         super(logger);
