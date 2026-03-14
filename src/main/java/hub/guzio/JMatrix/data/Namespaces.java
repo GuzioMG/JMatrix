@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static hub.guzio.JMatrix.AppService.stringifyArray;
+
 public record Namespaces(
         @NotNull Optional<List<Namespace>> aliases,
         @NotNull Optional<List<Namespace>> rooms,
@@ -21,19 +23,9 @@ public record Namespaces(
         return output;
     }
 
-    public static String[] stringifyArray(Object[] objects){
-        var strings = new String[objects.length];
-        int index = 0;
-        for (Object obj : objects){
-            strings[index] = obj.toString();
-            index++;
-        }
-        return strings;
-    }
-
-    public static boolean tryRegex(Optional<List<Namespace>> namespaces, String pattern) throws PatternSyntaxException {
-        if (namespaces.isEmpty()) return false;
-        for (Namespace ns : namespaces.get()) if (Pattern.compile(ns.regex()).matcher(pattern).find()) return true;
-        return false;
+    public static boolean notFoundInAnyNamespace(Optional<List<Namespace>> namespaces, String pattern) throws PatternSyntaxException {
+        if (namespaces.isEmpty()) return true;
+        for (Namespace ns : namespaces.get()) if (Pattern.compile(ns.regex()).matcher(pattern).find()) return false;
+        return true;
     }
 }

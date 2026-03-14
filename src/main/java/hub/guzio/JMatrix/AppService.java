@@ -102,9 +102,9 @@ public abstract class AppService implements AutoCloseable {
         //Dynamic protocol endpoints
         if (registration.protocols().isPresent()){
             for(var proto : registration.protocols().get().entrySet()){
-                server.createContext("/_matrix/app/v1/thirdparty/user/"+proto.getKey(), new UserQueryInProtocolHandler(this, proto.getValue()));
-                server.createContext("/_matrix/app/v1/thirdparty/protocol/"+proto.getKey(), new ProtocolQueryHandler(this, proto.getValue()));
-                server.createContext("/_matrix/app/v1/thirdparty/location/"+proto.getKey(), new LocationQueryInProtocolHandler(this, proto.getValue()));
+                server.createContext("/_matrix/app/v1/thirdparty/user/"+proto.getKey(), new UserQueryInProtocolHandler(this, proto.getValue(), proto.getKey()));
+                server.createContext("/_matrix/app/v1/thirdparty/protocol/"+proto.getKey(), new ProtocolQueryHandler(this, proto.getValue(), proto.getKey()));
+                server.createContext("/_matrix/app/v1/thirdparty/location/"+proto.getKey(), new LocationQueryInProtocolHandler(this, proto.getValue(), proto.getKey()));
             }
         }
 
@@ -202,4 +202,15 @@ public abstract class AppService implements AutoCloseable {
     public abstract Optional<Response> onTransaction(String body) throws Throwable;
     public abstract Optional<Response> onUserRequest(String userId) throws Throwable;
     public abstract Optional<Response> onRoomRequest(String roomAlias) throws Throwable;
+
+
+    public static String[] stringifyArray(Object[] objects){
+        var strings = new String[objects.length];
+        int index = 0;
+        for (Object obj : objects){
+            strings[index] = obj.toString();
+            index++;
+        }
+        return strings;
+    }
 }

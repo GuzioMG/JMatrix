@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class UserQueryHandler extends GuardedMatrixHandler {
     public UserQueryHandler(AppService appservice){
-        super(appservice, 5, 6, "GET", new Response(200, "json", "[]"));
+        super(appservice, 5, 6, "GET", new Response(404, "json", "{\"errcode\":\"M_NOT_FOUND\",\"error\":\"Found no matching user(s) in any available protocol.\"}"));
     }
 
     @Override
@@ -20,7 +20,7 @@ public class UserQueryHandler extends GuardedMatrixHandler {
 
     @Override
     protected Optional<Response> onRequest(HttpExchange rq, String body, String pathArg, int pathLength, String[] queryArgs) throws Throwable {
-        if (pathLength == 6) return Optional.of(new Response(404, "json", "{\"errcode\":\"M_NOT_FOUND\",\"error\":\"Unknown protocol.\"}"));
+        if (pathLength == 6) return Optional.of(UnknownProtocolQueryHandler.UNKNOWN_PROTOCOL_RESPONSE);
         return Optional.empty(); //TODO
     }
 }

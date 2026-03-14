@@ -18,7 +18,7 @@ public class UserCreateHandler extends GuardedMatrixHandler {
 
     @Override
     protected Optional<Response> onRequest(HttpExchange rq, String body, String userId, int pathLength, String[] queryArgs) throws Throwable {
-        if (!Namespaces.tryRegex(as.registration.namespaces().users(), userId)) return Optional.of(new Response(404, "json", "{\"errcode\":\"M_NOT_FOUND\",\"error\":\"User did not match this appservice's „users:” namespace - assuming it's certainly not gonna be found.\"}"));
+        if (Namespaces.notFoundInAnyNamespace(as.registration.namespaces().users(), userId)) return Optional.of(new Response(404, "json", "{\"errcode\":\"M_NOT_FOUND\",\"error\":\"User did not match this appservice's „users:” namespace - assuming it's certainly not gonna be found.\"}"));
         return as.onUserRequest(userId);
     }
 }

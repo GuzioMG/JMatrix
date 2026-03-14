@@ -9,8 +9,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class UnknownProtocolQueryHandler extends GuardedMatrixHandler {
+    public final static Response UNKNOWN_PROTOCOL_RESPONSE = new Response(404, "json", "{\"errcode\":\"M_NOT_FOUND\",\"error\":\"Unknown protocol.\"}");
+
     public UnknownProtocolQueryHandler(AppService appservice){
-        super(appservice, 6, "GET", new Response(404, "json", "{\"errcode\":\"M_NOT_FOUND\",\"error\":\"Unknown protocol.\"}"));
+        super(appservice, 6, "GET", UNKNOWN_PROTOCOL_RESPONSE);
     }
 
     @Override
