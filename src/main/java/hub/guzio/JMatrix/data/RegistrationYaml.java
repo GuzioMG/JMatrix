@@ -26,7 +26,7 @@ public record RegistrationYaml(
         if(Objects.isNull(url)) uriString = "null";
         else uriString = "\""+url+"\"";
 
-        var output = "as_token: \"" + as_token + "\"\nhs_token: \"" + hs_token + "\"\nid: " + id + "\nnamespaces:\n" + namespaces;
+        var output = "as_token: \"" + as_token + "\"\nhs_token: \"" + hs_token + "\"\nid: \"" + id + "\"\nnamespaces:\n" + namespaces;
 
         if (protocols.isPresent()) {
             var protocols = this.protocols.get();

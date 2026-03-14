@@ -9,6 +9,6 @@ public record Namespace(
 ) {
     @Override
     public @NotNull String toString() {
-        return "    - regex: "+regex+"\n    exclusive: "+exclusive+"\n";
+        return "    - regex: "+regex+"\n      exclusive: "+exclusive+"\n";
     }
 }
