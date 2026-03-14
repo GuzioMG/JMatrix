@@ -6,6 +6,7 @@ import hub.guzio.JMatrix.data.FieldType;
 import hub.guzio.JMatrix.data.ProtocolInstance;
 import hub.guzio.SaneServer.Logger;
 import hub.guzio.SaneServer.Response;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.util.Map;
@@ -50,11 +51,11 @@ public abstract class Protocol {
         return "{\"field_types\":{"+field_types+"},\"icon\":\""+icon+"\",\"instances\":["+String.join(",", Utils.stringifyArray(onInstancesQueryByProtocol()))+"],\"location_fields\":["+location_fields+"],\"user_fields\":["+user_fields+"]}";
     }
 
-    public abstract Map<String, Map<String, String>> onLocationQueryByAlias(Optional<String> alias) throws Throwable;
-    public abstract Optional<Response> onLocationQueryByProtocol(String[] args) throws Throwable;
+    public abstract Map<String, Map<String, String>> onLocationQueryByAlias(@NotNull Optional<String> alias) throws Throwable;
+    public abstract Optional<Response> onLocationQueryByProtocol(@NotNull Map<String, String> args) throws Throwable;
 
     public abstract ProtocolInstance[] onInstancesQueryByProtocol();
 
-    public abstract Map<String, Map<String, String>> onUsersQueryById(Optional<String> MxId) throws Throwable;
-    public abstract Optional<Response> onUsersQueryByProtocol(String[] args) throws Throwable;
+    public abstract Map<String, Map<String, String>> onUsersQueryById(@NotNull Optional<String> MxId) throws Throwable;
+    public abstract Optional<Response> onUsersQueryByProtocol(@NotNull Map<String, String> args) throws Throwable;
 }
